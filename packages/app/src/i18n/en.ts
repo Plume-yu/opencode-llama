@@ -748,6 +748,17 @@ export const dict = {
   "settings.section.server": "Server",
   "settings.tab.general": "General",
   "settings.tab.shortcuts": "Shortcuts",
+
+  "settings.agent.mcp.tabName": "Agent MCP",
+  "settings.agent.mcp.title": "Agent MCP Server Configuration",
+  "settings.agent.mcp.description": "Configure available MCP servers for each agent. When configured, the agent will only be able to use the specified MCP tools.",
+  "settings.agent.mcp.saved": "Configuration saved",
+  "settings.agent.mcp.savedDescription": "{{action}} MCP server {{server}} for {{agent}}",
+  "settings.agent.mcp.error": "Failed to save",
+  "settings.agent.mcp.noServers": "No MCP servers available. Please add MCP servers in settings first.",
+  "settings.agent.mcp.noAgents": "No custom agents configured.",
+  "settings.agent.mcp.hint": "Tip: By configuring MCP servers for agents, you can restrict agents to use only specific MCP tools. This helps improve security and control.",
+
   "settings.desktop.section.wsl": "WSL",
   "settings.desktop.wsl.title": "WSL integration",
   "settings.desktop.wsl.description": "Run the OpenCode server inside WSL on Windows.",

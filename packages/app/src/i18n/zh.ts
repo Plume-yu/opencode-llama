@@ -646,6 +646,16 @@ export const dict = {
   "settings.tab.general": "通用",
   "settings.tab.shortcuts": "快捷键",
 
+  "settings.agent.mcp.tabName": "智能体 MCP",
+  "settings.agent.mcp.title": "智能体 MCP 服务器配置",
+  "settings.agent.mcp.description": "为每个智能体配置可用的 MCP 服务器。配置后，智能体将只能使用指定的 MCP 工具。",
+  "settings.agent.mcp.saved": "配置已保存",
+  "settings.agent.mcp.savedDescription": "已为 {{agent}} {{action}} MCP 服务器 {{server}}",
+  "settings.agent.mcp.error": "保存失败",
+  "settings.agent.mcp.noServers": "当前没有可用的 MCP 服务器。请先在设置中添加 MCP 服务器。",
+  "settings.agent.mcp.noAgents": "当前没有配置任何自定义智能体。",
+  "settings.agent.mcp.hint": "提示：通过配置智能体的 MCP 服务器，可以限制智能体只能使用特定的 MCP 工具。这有助于提高安全性和控制力。",
+
   "settings.desktop.section.wsl": "WSL",
   "settings.desktop.wsl.title": "WSL 集成",
   "settings.desktop.wsl.description": "在 Windows 的 WSL 环境中运行 OpenCode 服务器。",

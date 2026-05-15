@@ -239,6 +239,7 @@ export interface Interface {
   readonly status: () => Effect.Effect<Record<string, Status>>
   readonly clients: () => Effect.Effect<Record<string, MCPClient>>
   readonly tools: () => Effect.Effect<Record<string, Tool>>
+  readonly toolsByServers: (serverNames: string[] | undefined) => Effect.Effect<Record<string, Tool>>
   readonly prompts: () => Effect.Effect<Record<string, PromptInfo & { client: string }>>
   readonly resources: () => Effect.Effect<Record<string, ResourceInfo & { client: string }>>
   readonly add: (name: string, mcp: ConfigMCP.Info) => Effect.Effect<{ status: Record<string, Status> | Status }>
@@ -689,6 +690,45 @@ export const layer = Layer.effect(
       return result
     })
 
+    const toolsByServers = Effect.fn("MCP.toolsByServers")(function* (serverNames: string[] | undefined) {
+      const result: Record<string, Tool> = {}
+      const s = yield* InstanceState.get(state)
+
+      const cfg = yield* cfgSvc.get()
+      const config = cfg.mcp ?? {}
+      const defaultTimeout = cfg.experimental?.mcp_timeout
+
+      let connectedClients = Object.entries(s.clients).filter(
+        ([clientName]) => s.status[clientName]?.status === "connected",
+      )
+
+      if (serverNames && serverNames.length > 0) {
+        connectedClients = connectedClients.filter(([clientName]) => serverNames.includes(clientName))
+      }
+
+      yield* Effect.forEach(
+        connectedClients,
+        ([clientName, client]) =>
+          Effect.gen(function* () {
+            const mcpConfig = config[clientName]
+            const entry = mcpConfig && isMcpConfigured(mcpConfig) ? mcpConfig : undefined
+
+            const listed = s.defs[clientName]
+            if (!listed) {
+              log.warn("missing cached tools for connected server", { clientName })
+              return
+            }
+
+            const timeout = entry?.timeout ?? defaultTimeout
+            for (const mcpTool of listed) {
+              result[sanitize(clientName) + "_" + sanitize(mcpTool.name)] = convertMcpTool(mcpTool, client, timeout)
+            }
+          }),
+        { concurrency: "unbounded" },
+      )
+      return result
+    })
+
     function collectFromConnected<T extends { name: string }>(
       s: State,
       listFn: (c: Client) => Promise<T[]>,
@@ -925,6 +965,7 @@ export const layer = Layer.effect(
       status,
       clients,
       tools,
+      toolsByServers,
       prompts,
       resources,
       add,

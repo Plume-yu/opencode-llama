@@ -609,7 +609,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
         })
       }
 
-      for (const [key, item] of Object.entries(yield* mcp.tools())) {
+      for (const [key, item] of Object.entries(yield* mcp.toolsByServers(input.agent.mcpServers))) {
         const execute = item.execute
         if (!execute) continue
 

@@ -997,6 +997,10 @@ export type AgentConfig = {
    * Maximum number of agentic iterations before forcing text-only response
    */
   maxSteps?: number
+  /**
+   * List of MCP server names that this agent can use
+   */
+  mcpServers?: string[]
   permission?: {
     edit?: "ask" | "allow" | "deny"
     bash?:

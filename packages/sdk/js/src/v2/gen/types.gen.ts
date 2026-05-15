@@ -990,6 +990,10 @@ export type AgentConfig = {
   color?: string | "primary" | "secondary" | "accent" | "success" | "warning" | "error" | "info"
   steps?: number
   maxSteps?: number
+  /**
+   * List of MCP server names that this agent can use
+   */
+  mcpServers?: string[]
   permission?: PermissionConfig
   [key: string]:
     | unknown

@@ -45,6 +45,9 @@ export const Info = Schema.Struct({
   prompt: Schema.optional(Schema.String),
   options: Schema.Record(Schema.String, Schema.Unknown),
   steps: Schema.optional(Schema.Finite),
+  mcpServers: Schema.optional(Schema.Array(Schema.String)).annotate({
+    description: "List of MCP server names that this agent can use. If not specified, all MCP servers are available.",
+  }),
 }).annotate({ identifier: "Agent" })
 export type Info = DeepMutable<Schema.Schema.Type<typeof Info>>
 
