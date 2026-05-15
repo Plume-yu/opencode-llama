@@ -112,6 +112,30 @@ This is used internally and can be invoked using `@general` in messages.
 
 Learn more about [agents](https://opencode.ai/docs/agents).
 
+### Local Models (LlamaCpp)
+
+OpenCode supports running local models using LlamaCpp. This allows you to use OpenCode without an internet connection or cloud API keys.
+
+**Supported Models:**
+- Llama 2/3
+- Qwen/Qwen2
+- CodeLlama
+- And other GGUF format models
+
+**Configuration:**
+1. Download a GGUF model file (e.g., `qwen2-7b-instruct-q4_k_m.gguf`)
+2. Open OpenCode Desktop app
+3. Go to Settings → Models → Add Model → LlamaCpp
+4. Configure model path and parameters:
+   - **Context Size**: Recommended 8192-16384 tokens
+   - **GPU Layers**: Number of layers to offload to GPU (0 for CPU only)
+   - **Temperature**: Controls output randomness (0.1-0.7 recommended)
+
+**Performance Tips:**
+- Use Q4_K_M or Q5_K_M quantized models for best balance of speed and quality
+- Enable Flash Attention for faster inference
+- Adjust GPU layers based on available VRAM
+
 ### Documentation
 
 For more info on how to configure OpenCode, [**head over to our docs**](https://opencode.ai/docs).
