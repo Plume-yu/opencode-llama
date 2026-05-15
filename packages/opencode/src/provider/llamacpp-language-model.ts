@@ -250,7 +250,10 @@ export class LlamacppLanguageModel implements LanguageModelV3 {
     const abortController = new AbortController()
     const signal = options.abortSignal
     if (signal) {
-      signal.addEventListener("abort", () => abortController.abort(), { once: true })
+      signal.addEventListener("abort", () => {
+        console.log("[LlamacppLanguageModel] Abort signal received")
+        abortController.abort()
+      }, { once: true })
     }
     const stream = new ReadableStream<LanguageModelV3StreamPart>({
       start: async (controller) => {
@@ -284,18 +287,30 @@ export class LlamacppLanguageModel implements LanguageModelV3 {
           const textId = crypto.randomUUID()
           controller.enqueue({ type: "text-start", id: textId })
           let fullText = ""
-          await chat.generateResponse(history, {
-            temperature: options.temperature ?? 0.2,
-            topP: options.topP ?? 0.95,
-            topK: options.topK ?? this.opts.topK ?? 40,
-            repeatPenalty: this.opts.repeatPenalty ?? 1.05,
-            maxTokens: options.maxOutputTokens ?? 2048,
-            signal: abortController.signal,
-            onTextChunk: (text: string) => {
-              fullText += text
-              controller.enqueue({ type: "text-delta", id: textId, delta: text })
-            },
-          })
+          let wasAborted = false
+          
+          try {
+            await chat.generateResponse(history, {
+              temperature: options.temperature ?? 0.2,
+              topP: options.topP ?? 0.95,
+              topK: options.topK ?? this.opts.topK ?? 40,
+              repeatPenalty: this.opts.repeatPenalty ?? 1.05,
+              maxTokens: options.maxOutputTokens ?? 2048,
+              signal: abortController.signal,
+              onTextChunk: (text: string) => {
+                fullText += text
+                controller.enqueue({ type: "text-delta", id: textId, delta: text })
+              },
+            })
+          } catch (err) {
+            if (abortController.signal.aborted) {
+              wasAborted = true
+              console.log("[LlamacppLanguageModel] Generation aborted by user")
+            } else {
+              throw err
+            }
+          }
+          
           controller.enqueue({ type: "text-end", id: textId })
           
           const toolCalls = parseToolCalls(fullText)
