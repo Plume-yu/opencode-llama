@@ -4,11 +4,14 @@ import { Switch } from "@opencode-ai/ui/switch"
 import { Icon } from "@opencode-ai/ui/icon"
 import { IconButton } from "@opencode-ai/ui/icon-button"
 import { TextField } from "@opencode-ai/ui/text-field"
-import { type Component, For, Show } from "solid-js"
+import { Button } from "@opencode-ai/ui/button"
+import { useDialog } from "@opencode-ai/ui/context/dialog"
+import { createMemo, type Component, For, Show } from "solid-js"
 import { useLanguage } from "@/context/language"
 import { useModels } from "@/context/models"
-import { popularProviders } from "@/hooks/use-providers"
+import { popularProviders, useProviders } from "@/hooks/use-providers"
 import { SettingsList } from "./settings-list"
+import { DialogLlamacppConfig } from "./dialog-llamacpp-config"
 
 type ModelItem = ReturnType<ReturnType<typeof useModels>["list"]>[number]
 
@@ -34,6 +37,19 @@ const ListEmptyState: Component<{ message: string; filter: string }> = (props) =
 export const SettingsModels: Component = () => {
   const language = useLanguage()
   const models = useModels()
+  const providers = useProviders()
+  const dialog = useDialog()
+
+  const connectedProviders = createMemo(() =>
+    providers.connected().map(p => ({ id: p.id, name: p.name, models: Object.keys(p.models) }))
+  )
+
+  const displayList = models.list()
+
+  ;(window as any).__debug_models = {
+    connected: () => JSON.parse(JSON.stringify(connectedProviders())),
+    list: () => JSON.parse(JSON.stringify(displayList)),
+  }
 
   const list = useFilteredList<ModelItem>({
     items: (_filter) => models.list(),
@@ -131,6 +147,23 @@ export const SettingsModels: Component = () => {
             </For>
           </Show>
         </Show>
+
+        <div class="flex flex-col gap-1 pt-4 border-t border-border-weak-base">
+          <div class="flex items-center justify-between gap-4 py-3">
+            <div class="flex flex-col min-w-0">
+              <span class="text-14-medium text-text-strong">{language.t("provider.llamacpp.title")}</span>
+              <span class="text-12-regular text-text-weak">{language.t("dialog.provider.llamacpp.note")}</span>
+            </div>
+            <Button
+              size="large"
+              variant="secondary"
+              icon="plus-small"
+              onClick={() => { dialog.show(() => <DialogLlamacppConfig />) }}
+            >
+              {language.t("common.configure")}
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -24,14 +24,16 @@
   },
   "main": "./out/main/index.js",
   "dependencies": {
+    "@node-llama-cpp/win-x64": "3.18.1",
+    "drizzle-orm": "catalog:",
     "effect": "catalog:",
     "electron-context-menu": "4.1.2",
     "electron-log": "^5",
     "electron-store": "^10",
     "electron-updater": "^6",
     "electron-window-state": "^5.0.3",
-    "drizzle-orm": "catalog:",
-    "marked": "^15"
+    "marked": "^15",
+    "node-llama-cpp": "3.18.1"
   },
   "devDependencies": {
     "@actions/artifact": "4.0.0",

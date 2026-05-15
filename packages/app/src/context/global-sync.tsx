@@ -422,7 +422,10 @@ function createGlobalSync() {
 
   const updateConfigMutation = useMutation(() => ({
     mutationFn: (config: Config) => globalSDK.client.global.config.update({ config }),
-    onSuccess: () => bootstrap.refetch(),
+    onSuccess: () => {
+      bootstrap.refetch()
+      queryClient.invalidateQueries({ queryKey: ["providers"] })
+    },
   }))
 
   return {

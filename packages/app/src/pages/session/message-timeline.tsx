@@ -270,6 +270,16 @@ export function MessageTimeline(props: {
     return "hidden"
   })
 
+  const tokenSpeed = createMemo(() => {
+    const status = sessionStatus()
+    if (status.type !== "busy") return undefined
+    return {
+      tokensPerSecond: status.tokensPerSecond,
+      totalTokens: status.totalTokens,
+      elapsedMs: status.elapsedMs,
+    }
+  })
+
   createEffect(() => {
     if (workingStatus() !== "hiding") return
 
@@ -768,6 +778,15 @@ export function MessageTimeline(props: {
                             classList={{ "opacity-0": workingStatus() === "hiding" }}
                           >
                             <Spinner class="size-4" style={{ color: tint() ?? "var(--icon-interactive-base)" }} />
+                          </div>
+                        </Show>
+                        <Show when={tokenSpeed() && workingStatus() !== "hidden"}>
+                          <div
+                            class="shrink-0 flex items-center gap-1 ml-2 px-2 py-0.5 rounded-full bg-surface-base border border-border-weak-base text-11-regular text-text-weak"
+                            classList={{ "opacity-0": workingStatus() === "hiding" }}
+                          >
+                            <Icon name="zap" size="tiny" />
+                            <span>{tokenSpeed()?.tokensPerSecond || 0} tokens/s</span>
                           </div>
                         </Show>
                       </div>

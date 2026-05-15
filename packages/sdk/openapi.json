@@ -9871,6 +9871,18 @@
               "type": {
                 "type": "string",
                 "enum": ["busy"]
+              },
+              "tokensPerSecond": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "totalTokens": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "elapsedMs": {
+                "type": "integer",
+                "minimum": 0
               }
             },
             "required": ["type"],

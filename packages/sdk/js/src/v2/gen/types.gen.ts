@@ -279,6 +279,9 @@ export type SessionStatus =
     }
   | {
       type: "busy"
+      tokensPerSecond?: number
+      totalTokens?: number
+      elapsedMs?: number
     }
 
 export type EventTuiPromptAppend = {

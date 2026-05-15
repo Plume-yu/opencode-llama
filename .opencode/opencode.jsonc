@@ -1,6 +1,19 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "provider": {},
+  "provider": {
+    "llamacpp": {
+      "name": "LlamaCpp",
+      "models": {
+        "test-model": {
+          "id": "test-model",
+          "name": "Test Model",
+          "options": {
+            "GGUF": "E:/LmStudio/Models/lmstudio-community/Qwen3-Coder-30B-A3B-Instruct-GGUF/Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf"
+          }
+        }
+      }
+    }
+  },
   "permission": {},
   "mcp": {},
   "tools": {

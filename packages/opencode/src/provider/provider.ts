@@ -819,6 +819,16 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         options: {},
       }
     }),
+    llamacpp: () =>
+      Effect.succeed({
+        autoload: true,
+        async getModel(_sdk: any, modelID: string, options?: Record<string, any>) {
+          const { createLlamacppModelLoader } = await import("./llamacpp")
+          const loader = createLlamacppModelLoader(options ?? {})
+          return loader(_sdk, modelID, options)
+        },
+        options: {},
+      }),
     cerebras: () =>
       Effect.succeed({
         autoload: false,
@@ -961,7 +971,11 @@ export function toPublicInfo(provider: Info): Info {
 }
 
 export function defaultModelIDs<T extends { models: Record<string, { id: string }> }>(providers: Record<string, T>) {
-  return mapValues(providers, (item) => sort(Object.values(item.models))[0].id)
+  return mapValues(providers, (item) => {
+    const sorted = sort(Object.values(item.models))
+    if (sorted.length === 0) return ""
+    return sorted[0].id
+  })
 }
 
 export class ModelNotFoundError extends Schema.TaggedErrorClass<ModelNotFoundError>()("ProviderModelNotFoundError", {

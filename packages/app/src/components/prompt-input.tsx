@@ -1499,48 +1499,49 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
                   </div>
                 </Show>
                 <Show when={!providersLoading()}>
-                  <Show when={store.mode !== "shell"}>
-                    <div
-                      data-component="prompt-model-control"
-                      style={providersShouldFadeIn() ? { animation: "fade-in 0.3s" } : undefined}
-                    >
-                      <Show
-                        when={providers.paid().length > 0}
-                        fallback={
-                          <TooltipKeybind
-                            placement="top"
-                            gutter={4}
-                            title={language.t("command.model.choose")}
-                            keybind={command.keybind("model.choose")}
-                          >
-                            <Button
-                              data-action="prompt-model"
-                              as="div"
-                              variant="ghost"
-                              size="normal"
-                              class="min-w-0 max-w-[320px] text-13-regular text-text-base group"
-                              style={control()}
-                              onClick={() => {
-                                void import("@/components/dialog-select-model-unpaid").then((x) => {
-                                  dialog.show(() => <x.DialogSelectModelUnpaid model={local.model} />)
-                                })
-                              }}
-                            >
-                              <Show when={local.model.current()?.provider?.id}>
-                                <ProviderIcon
-                                  id={local.model.current()?.provider?.id ?? ""}
-                                  class="size-4 shrink-0 opacity-40 group-hover:opacity-100 transition-opacity duration-150"
-                                  style={{ "will-change": "opacity", transform: "translateZ(0)" }}
-                                />
-                              </Show>
-                              <span class="truncate">
-                                {local.model.current()?.name ?? language.t("dialog.model.select.title")}
-                              </span>
-                              <Icon name="chevron-down" size="small" class="shrink-0" />
-                            </Button>
-                          </TooltipKeybind>
-                        }
+                    <Show when={store.mode !== "shell"}>
+                      <div
+                        data-component="prompt-model-control"
+                        style={providersShouldFadeIn() ? { animation: "fade-in 0.3s" } : undefined}
+                        class="flex items-center gap-2"
                       >
+                        <Show
+                          when={providers.paid().length > 0}
+                          fallback={
+                            <TooltipKeybind
+                              placement="top"
+                              gutter={4}
+                              title={language.t("command.model.choose")}
+                              keybind={command.keybind("model.choose")}
+                            >
+                              <Button
+                                data-action="prompt-model"
+                                as="div"
+                                variant="ghost"
+                                size="normal"
+                                class="min-w-0 max-w-[280px] text-13-regular text-text-base group"
+                                style={control()}
+                                onClick={() => {
+                                  void import("@/components/dialog-select-model-unpaid").then((x) => {
+                                    dialog.show(() => <x.DialogSelectModelUnpaid model={local.model} />)
+                                  })
+                                }}
+                              >
+                                <Show when={local.model.current()?.provider?.id}>
+                                  <ProviderIcon
+                                    id={local.model.current()?.provider?.id ?? ""}
+                                    class="size-4 shrink-0 opacity-40 group-hover:opacity-100 transition-opacity duration-150"
+                                    style={{ "will-change": "opacity", transform: "translateZ(0)" }}
+                                  />
+                                </Show>
+                                <span class="truncate">
+                                  {local.model.current()?.name ?? language.t("dialog.model.select.title")}
+                                </span>
+                                <Icon name="chevron-down" size="small" class="shrink-0" />
+                              </Button>
+                            </TooltipKeybind>
+                          }
+                        >
                         <TooltipKeybind
                           placement="top"
                           gutter={4}
@@ -1554,7 +1555,7 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
                               variant: "ghost",
                               size: "normal",
                               style: control(),
-                              class: "min-w-0 max-w-[320px] text-13-regular text-text-base group",
+                              class: "min-w-0 max-w-[280px] text-13-regular text-text-base group",
                               "data-action": "prompt-model",
                             }}
                             onClose={restoreFocus}
@@ -1572,6 +1573,12 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
                             <Icon name="chevron-down" size="small" class="shrink-0" />
                           </ModelSelectorPopover>
                         </TooltipKeybind>
+                      </Show>
+                      <Show when={working()}>
+                        <div class="flex items-center gap-1 text-12-regular text-text-weak">
+                          <Icon name="loader" class="size-3.5 animate-spin" />
+                          <span>{sync.data.session_status[params.id ?? ""]?.tokensPerSecond ?? 0} tokens/s</span>
+                        </div>
                       </Show>
                     </div>
                     <Show when={variants().length > 2}>

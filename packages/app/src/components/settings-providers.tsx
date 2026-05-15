@@ -34,9 +34,12 @@ export const SettingsProviders: Component = () => {
   const globalSync = useGlobalSync()
   const providers = useProviders()
 
+  const hiddenProviders = new Set(["llamacpp"])
+
   const connected = createMemo(() => {
     return providers
       .connected()
+      .filter((p) => !hiddenProviders.has(p.id))
       .filter((p) => p.id !== "opencode" || Object.values(p.models).find((m) => m.cost?.input))
   })
 

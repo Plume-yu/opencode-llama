@@ -119,6 +119,9 @@ export const layer = Layer.effect(
         needsCompaction: false,
         currentText: undefined,
         reasoningMap: {},
+        startTime: Date.now(),
+        totalTokens: 0,
+        lastStatusUpdate: 0,
       }
       let aborted = false
       const slog = log.clone().tag("session.id", input.sessionID).tag("messageID", input.assistantMessage.id)
@@ -578,6 +581,7 @@ export const layer = Layer.effect(
           case "text-delta":
             if (!ctx.currentText) return
             ctx.currentText.text += value.text
+            ctx.totalTokens += value.text.length
             if (value.providerMetadata) ctx.currentText.metadata = value.providerMetadata
             yield* session.updatePartDelta({
               sessionID: ctx.currentText.sessionID,
@@ -586,6 +590,18 @@ export const layer = Layer.effect(
               field: "text",
               delta: value.text,
             })
+            const now = Date.now()
+            if (now - ctx.lastStatusUpdate >= 1000) {
+              const elapsedMs = now - ctx.startTime
+              const tokensPerSecond = Math.round((ctx.totalTokens / elapsedMs) * 1000)
+              yield* status.set(ctx.sessionID, { 
+                type: "busy", 
+                tokensPerSecond,
+                totalTokens: ctx.totalTokens,
+                elapsedMs 
+              })
+              ctx.lastStatusUpdate = now
+            }
             return
 
           case "text-end":
